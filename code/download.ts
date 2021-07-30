@@ -1,23 +1,28 @@
 export const download = async (symbol: string) => {
   const now = new Date();
   console.log("Downloading historical data...");
-  for (
-    let month = (now.getMonth() || 12),
-      year = now.getFullYear() - (now.getMonth() ? 0 : 1);;
-    --month
-  ) {
+  const ziplist = (await (await fetch(
+    `https://s3-ap-northeast-1.amazonaws.com/data.binance.vision?delimiter=/&prefix=data/spot/monthly/klines/${symbol}/1d/`,
+  )).text()).match(
+    new RegExp(
+      `data/spot/monthly/klines/${symbol}/1d/${symbol}-1d-[0-9]{4}-[0-9]{2}\.zip<`,
+      "g",
+    ),
+  )?.map((path) =>
+    `https://data.binance.vision/${path.substr(0, path.length - 1)}`
+  );
+  if (!ziplist) return;
+  console.log("over", ziplist);
+  await Promise.all(ziplist.map(async (path) => {
+    const matches = path.match(/([0-9]{4})-([0-9]{2})/);
+    if (!matches) return;
+    const [, year, month] = matches;
     console.log("Downloading", symbol, year, month);
     const fname = `./data/${symbol}/${year}-${month}`;
     const blob = (await fetch(
-      `https://data.binance.vision/data/spot/monthly/klines/${symbol}/1m/${symbol}-1m-${year}-${(month <
-          10
-        ? "0" + month
-        : month)}.zip`,
+      path,
     )).blob();
     const data = new Uint8Array(await (await blob).arrayBuffer());
-    if (data.length < 10000) {
-      break;
-    }
     await Deno.writeFile(fname + ".zip", data);
     await Deno.run({
       cmd: ["unzip", fname + ".zip", "-d", "data/" + symbol],
@@ -25,10 +30,5 @@ export const download = async (symbol: string) => {
       stderr: "piped",
     }).status();
     await Deno.remove(fname + ".zip");
-
-    if (month === 1) {
-      month = 13;
-      year--;
-    }
-  }
+  }));
 };

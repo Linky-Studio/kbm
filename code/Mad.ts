@@ -17,7 +17,7 @@ Ignore`;
 
 import { loadCsvs } from "./loadCsvs.ts";
 
-export class KlineByMinute {
+export class Mad {
   ready = false;
 
   tickers: { [symbol: string]: { [minute: string]: string } } = {};
@@ -57,6 +57,6 @@ export class KlineByMinute {
 
   minuteExists = (unixMinute: number) => !!this.tickers[unixMinute];
 
-  getKlineForMinute = (symbol: string, unixMinute: number) =>
+  getMad = (symbol: string, unixMinute: number) =>
     this.tickers[symbol]?.[unixMinute];
 }

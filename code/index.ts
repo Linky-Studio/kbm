@@ -1,2 +1,2 @@
 export { Server } from "./Server.ts";
-export { KlineByMinute } from "./KlineByMinute.ts";
+export { Mad } from "./Mad.ts";

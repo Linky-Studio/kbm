@@ -3,24 +3,24 @@ import {
   ServerRequest,
 } from "https://deno.land/std@0.102.0/http/server.ts";
 
-import { KlineByMinute } from "./KlineByMinute.ts";
+import { Mad } from "./Mad.ts";
 
 export class Server {
   ready = false;
   running = false;
-  kbm: KlineByMinute;
+  mad: Mad;
   constructor() {
-    this.kbm = new KlineByMinute();
+    this.mad = new Mad();
   }
   private listener = (req: ServerRequest) => {
     //console.log(req);
     const [, symbol, minute] = req.url.split(/\//g);
     //.match(/^\/([^\/]+)\/([0-9]+)$/);
     if (!minute) {
-      req.respond({ status: 200, body: "no minute" });
+      req.respond({ status: 200, body: "no day specified" });
     }
-    const result = this.kbm.getKlineForMinute(symbol, parseInt(minute)) ??
-      "invalid minute";
+    const result = this.mad.getMad(symbol, parseInt(minute)) ??
+      "invalid day specified";
     console.log(symbol, minute, "-->", result);
     req.respond({ status: 200, body: result });
   };
@@ -28,7 +28,7 @@ export class Server {
     if (this.ready) {
       return;
     }
-    await this.kbm.init(symbols);
+    await this.mad.init(symbols);
     this.ready = true;
   };
   start = async (port = 8008, symbols: string[] = ["ETHUSDT"]) => {
