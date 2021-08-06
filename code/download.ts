@@ -1,5 +1,4 @@
 export const download = async (symbol: string) => {
-  const now = new Date();
   console.log("Downloading historical data...");
   const ziplist = (await (await fetch(
     `https://s3-ap-northeast-1.amazonaws.com/data.binance.vision?delimiter=/&prefix=data/spot/monthly/klines/${symbol}/1d/`,

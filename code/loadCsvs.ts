@@ -62,4 +62,4 @@ export const loadCsvs = async (symbol: string) => {
   return tickers;
 };
 
-loadCsvs("ETHUSDT");
+//loadCsvs("ETHUSDT");

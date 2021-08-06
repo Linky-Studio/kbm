@@ -2,7 +2,10 @@ import { emptyDir, ensureDir } from "https://deno.land/std@0.102.0/fs/mod.ts";
 
 import { download } from "./download.ts";
 
-`Open time
+/*
+Fields:
+
+Open time
 Open
 High
 Low
@@ -13,7 +16,8 @@ Quote asset volume
 Number of trades
 Taker buy base asset volume
 Taker buy quote asset volume
-Ignore`;
+Ignore
+*/
 
 import { loadCsvs } from "./loadCsvs.ts";
 
@@ -34,7 +38,8 @@ export class Mad {
       await ensureDir(path);
       const files = Deno.readDirSync(path);
       let empty = true;
-      for (const _file of files) {
+      if ([...files].length) {
+        console.log("files exist");
         empty = false;
         break;
       }
